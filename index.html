@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>磁場中の荷電粒子の運動</title>
+  <!--Three.jsの導入-->
+  <script src="https://unpkg.com/three/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+  <!--MathJaxの導入-->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!--intro.js, introjs.cssを読み込み -->
+  <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+  <!--bootstrap5の導入-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+  <h3 class="title">磁場中の荷電粒子の運動</h3>
+  <div class="msr_box01">
+  電荷\(q,\)質量\(m\)の荷電粒子が，磁束密度\(\boldsymbol{B}\)の磁界中を速度ベクトル\(\boldsymbol{v}\)で運動しているとする。
+  この時、荷電粒子が磁界から受ける力を\(F\)とすると、支配方程式は
+  
+  \[ F= m\frac{d^2\boldsymbol{p}}{dt^2} = q\boldsymbol{v}\times\boldsymbol{B}\]
+  \[ \Leftrightarrow \frac{d^2\boldsymbol{p}}{dt^2} = \frac{q}{m}\boldsymbol{v}\times\boldsymbol{B}\]
+  \(q,m\)は粒子に固有な定数であることから、\(\boldsymbol{v},\boldsymbol{B}\)を定めれば、\(\frac{q}{m}\)が分かる。これを比電荷という。比電荷を求めることで、粒子の質量などを推定できる。
+  <br>
+  ここで、\(\boldsymbol{B}=(0,0,B_z)^T\),\(\boldsymbol{v}=(v_x,v_y,v_z)^T\)として考えると、\(\boldsymbol{v}\times\boldsymbol{B}=(v_yB_z,-v_xB_z,0)^T\)となる。
+  \(\frac{d\boldsymbol{p}}{dt}=\boldsymbol{v}\)とすると、\(\frac{d\boldsymbol{v}}{dt}=(v_yB_z,-v_xB_z,0)^T\)である。
+  <br>この時の荷電粒子の振る舞いをシミュレーションを通して理解しよう。
+  </div>
+
+
+  <p><h3 class="title">荷電粒子シミュレーション</h3></p>  
+  <p>
+    中央の青軸:\(x\),赤軸:\(y\),緑軸:\(z\)として、\(z\)軸上向きの方向を正として初速度\(v_y\)を与えたときの、磁束密度\(B_z\)の磁界中での荷電粒子の振る舞いを観察する。
+    <br>各パラメータはシミュレーション画面下部にスライドバーより設定可能である。
+  </p>
+  <div id="info" data-title="Step 6" data-step="6" data-intro="シミュレーション内の経過時間を表示します。">Time: 0.000 s</div>
+  <!--canvas:シミュレーションの画面-->
+  <canvas id="myCanvas" data-title="Step 5" data-step="5" data-intro="シミュレーション結果はこの画面に映し出されます。開始すると、画面奥の灰色の箱から荷電粒子が発射されます。"  width="600" height="400"></canvas>
+  
+  <br>
+  <input type="button" data-title="Step 1" data-step="1" data-intro="このボタンを押すと、シミュレーションが始まります。停止や再開も行えます。" id="btnAnime" value="アニメーション開始" onclick="startAnime()">
+  <input type="button" data-title="Step 2" data-step="2" data-intro="シミュレーションを停止し、初期状態に戻します。" id="btnReset" value="リセット" onclick="init()">
+  <input type="button" data-title="Step 3" data-step="3" data-intro="パラメータに基づいて、荷電粒子が座標の原点を周るような位置に移動させます。" id="btnSetPosR" value="円運動の中心が原点となる位置にセット" onclick="SetPosR()" disabled>
+  <input type="button" value="Intro.js によるチュートリアル" onclick="introJs().start();">
+  
+  <div class="msr_box02">
+
+  <div id="para" data-title="Step 4" data-step="4" data-intro="シミュレーションにおける各パラメータの設定を行えます。">
+  <p>磁場のz成分\(B_z[T]\): <input type="range" id="B" name="B" min="-3" max="3" step="0.1" value="-2" oninput="setB()">
+    現在の値:<span id="current-valueB"></span>\(\times 10^{-12}\)
+  </p>
+  <p>荷電粒子の電荷\(q[C]\):<input type="range" id="q" name="q" min="-5" max="5" step="0.1" value="-1.6" oninput="setq()">
+    現在の値:<span id="current-valueq"></span>\(\times 10^{-19}\)
+  </p>
+  <p>荷電粒子の質量\(m[kg]\):<input type="range" id="m" name="m" min="5" max="15" step="0.1" value="9.1" oninput="setm()">
+    現在の値:<span id="current-valuem"></span>\(\times 10^{-31}\)
+  </p>
+  <p>荷電粒子のz方向への速度\(v_z[m/s]\):<input type="range" id="v_z" name="v_z" min="-3" max="3" step="0.1" oninput="setvz()">
+    現在の値:<span id="current-valuev_z"></span>
+  </p>
+  <p>荷電粒子のy方向への初速度\(v_y[m/s]\): <input type="range" id="iv_y" name="iv_y" min="1" max="10" value="5" step="0.1" oninput="setvy()" disabled>
+    値:<span id="initV_Y">0</span>
+  </p>
+  </div>
+
+<div data-title="Step 7" data-step="7" data-intro="荷電粒子の速度,座標を計算します。">
+  <p>
+    荷電粒子の速度\(\boldsymbol{v}[m/s^2]=(v_x,v_y,v_z\))=(<span id="qvx">0</span>,<span id="qvy">0</span>,<span id="qvz">0</span>) |\(\boldsymbol{v}\)|=<span id="sizeV"></span>
+  </p>
+  <p>
+    荷電粒子の座標\(\boldsymbol{p}[m]=(p_x,p_y,p_z\))=(<span id="pvx">0</span>,<span id="pvy">0</span>,<span id="pvz">0</span>)
+  </p>
+</div>
+
+</div>  
+
+なお、原点は座標軸の交わる部分である。円運動の半径は\(r = \frac{m|\boldsymbol{v}|}{qB_z}\)により算出されている。
+  <script src="src/index.js"></script>
+  <link rel="stylesheet" href="src/style.css">
+
+</body>
+
+</html>

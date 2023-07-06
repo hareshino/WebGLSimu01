@@ -1,0 +1,56 @@
+body {
+    padding: 5% 10%;
+}
+
+.title {
+    text-align: center;
+    background-color: #FFFFFF;
+    border-top: solid 5px #5989cf;
+    border-bottom: solid 5px #5989cf;
+    padding: 10px;
+}
+
+.Name {
+    text-align: center;
+}
+.msr_box01 {
+    text-align: start;
+    background-color: #FFFFFF;
+    border: double 5px #4ec4d3;
+    padding: 10px;
+  }
+  .msr_box01 a{
+    background-color: #FFFFFF;
+    box-sizing: border-box;
+    color:#000000;
+    display:block;
+    transition: 0.2s ease-in-out;
+    -o-transition: 0.2s ease-in-out;
+    -moz-transition: 0.2s ease-in-out;
+    -webkit-transition: 0.2s ease-in-out;
+  }
+  .msr_box01 a:hover{
+    opacity: 0.8;
+  }
+
+.msr_box02 {
+    text-align: justify;
+    background-color: #FFFFFF;
+    border-top: double 5px #4ec4d3;
+    border-bottom: double 5px #4ec4d3;
+    padding: 8px;
+  }
+  .msr_box02 a{
+    background-color: #FFFFFF;
+    box-sizing: border-box;
+    color:#000000;
+    display:block;
+    padding: 8px;
+    transition: 0.2s ease-in-out;
+    -o-transition: 0.2s ease-in-out;
+    -moz-transition: 0.2s ease-in-out;
+    -webkit-transition: 0.2s ease-in-out;
+  }
+  .msr_box02 a:hover{
+    opacity: 0.8;
+  }
